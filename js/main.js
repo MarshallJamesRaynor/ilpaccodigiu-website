@@ -1,87 +1,87 @@
+
 let today = new Date();
+today.setHours(0,0,0,0);
 let currentMonth = today.getMonth();
 let currentYear = today.getFullYear();
-let selectYear = document.getElementById("year");
-let selectMonth = document.getElementById("month");
+let currentDay = today.getDate();
+let selectYear =  currentYear;
+let selectMonth = currentMonth;
 
 let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
 let monthAndYear = document.getElementById("monthAndYear");
+
+
 showCalendar(currentMonth, currentYear);
 
 
-function next() {
-    currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
-    currentMonth = (currentMonth + 1) % 12;
-    showCalendar(currentMonth, currentYear);
-}
-
-function previous() {
-    currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
-    currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-    showCalendar(currentMonth, currentYear);
-}
-
-function jump() {
-    currentYear = parseInt(selectYear.value);
-    currentMonth = parseInt(selectMonth.value);
-    showCalendar(currentMonth, currentYear);
-}
-
 function showCalendar(month, year) {
+    let tbl = document.getElementById("calendar-body"); // body of the calendar
+    // clearing all previous cells
+    tbl.innerHTML = "";
+    
+    let daysInMonth = new Date(year, month,0).getDate();
+    let firstDay = (new Date(year, month, 1)).getDay()-1;
 
-    let firstDay = (new Date(year, month)).getDay()-1;
     if(firstDay < 0){
         firstDay = 6;
     }
-    console.log(firstDay);
-    let daysInMonth = 32 - new Date(year, month, 32).getDate();
-
-    let tbl = document.getElementById("calendar-body"); // body of the calendar
-
-    // clearing all previous cells
-   tbl.innerHTML = "";
-
-    // filing data about month and in the page via DOM.
     monthAndYear.innerHTML = months[month] + " " + year;
- //   selectYear.value = year;
-//    selectMonth.value = month;
 
-     // creating all cells
+    // creating all cells
+    let i=0;
     let date = 1;
-    for (let i = 0; i < 6; i++) {
-        // creates a table row
+    let finished = true;
+    while(finished){
         let row = document.createElement("div");
         row.setAttribute("class", "calendar__week");
-        //creating individual cells, filing them up with data.
         for (let j = 0; j < 7; j++) {
             if (i === 0 && j < firstDay) {
-                let cell = document.createElement("div");
-                let cellText = document.createTextNode("");
-                cell.setAttribute("class", "calendar__day day");
-                cell.appendChild(cellText);
-                row.appendChild(cell);
+                createCell(row);
             }
             else if (date > daysInMonth) {
-                break;
+                createCell(row);
+                finished = false;
             }
-
             else {
-                let cell = document.createElement("div");
-                let cellText = document.createTextNode(date);
-                cell.setAttribute("class", "calendar__day day");
-                if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
-                    cell.classList.add("bg-info");
-                } // color today's date
-                cell.appendChild(cellText);
-                row.appendChild(cell);
+                createCell(row,date);
                 date++;
             }
-
-
-        }
-
+    }
+        i++;
         tbl.appendChild(row); // appending each row into calendar body.
     }
-
 }
+
+
+function createCell(row,date){
+    let cell = document.createElement("div");
+    let cellText = document.createTextNode((typeof date === 'undefined') ? "":date) ;
+    cell.setAttribute("class", "calendar__day day");
+    cell.appendChild(cellText);
+    checkToday(cell,date);
+    row.appendChild(cell);
+}
+
+function checkToday(cell,date){
+    if (typeof date !== 'undefined'){
+        day = new Date(selectYear,selectMonth,date);
+        if( day.getTime() === today.getTime()) {
+            cell.classList.add("bg-info");
+        } // color today's date
+    }
+}
+
+function next() {
+    selectYear = (selectMonth === 11) ? selectYear + 1 : selectYear;
+    selectMonth = (selectMonth + 1) % 12;
+    monthAndYear.innerHTML = months[selectMonth] + " " + selectYear;
+    showCalendar(selectMonth, selectYear);
+}
+
+function previous() {
+    selectYear = (selectMonth === 0) ? selectYear - 1 : selectYear;
+    selectMonth = (selectMonth === 0) ? 11 : selectMonth - 1;
+    monthAndYear.innerHTML = months[selectMonth] + " " + selectYear;
+    showCalendar(selectMonth, selectYear);
+}
+

@@ -10,7 +10,7 @@
         <i class="fas fa-chevron-circle-left"></i>
         </div>
 
-        <div id="monthAndYear" class="current-month monthtitle">June 2016</div>
+        <div id="monthAndYear" class="current-month monthtitle"></div>
         <div class="arrow" id="next" onclick="next()"> 
             <i class="fas fa-chevron-circle-right"></i>
         </div>
